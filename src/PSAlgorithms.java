@@ -7,7 +7,7 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
     /**
      * Method: 逆时针旋转图片
      *
-     * @param source
+     * @param source 要被逆时针旋转图片
      * @return
      */
     public GImage rotateCounterclockwise(GImage source) {
@@ -41,7 +41,7 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
     /**
      * Method: 顺时针旋转图片
      *
-     * @param source
+     * @param source 要被顺时针旋转图片
      * @return
      */
     public GImage rotateClockwise(GImage source) {
@@ -75,7 +75,7 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
     /**
      * Method: 水平翻转图片
      *
-     * @param source
+     * @param source 要被水平翻转图片
      * @return
      */
     public GImage flipHorizontal(GImage source) {
@@ -109,7 +109,7 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
     /**
      * Method: 图片反相
      *
-     * @param source
+     * @param source 要被反相的图片
      * @return
      */
     public GImage negative(GImage source) {
@@ -148,7 +148,15 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
      * @return 裁剪后的图片
      */
     public GImage crop(GImage source, int cropX, int cropY, int cropWidth, int cropHeight) {
-        // TODO
-        return null;
+        int[][] oldPixelArray = source.getPixelArray();
+        int[][] newPixelArray = new int[cropHeight][cropWidth];
+        for (int xNew = 0; xNew < cropWidth; xNew++) {
+            for (int yNew = 0; yNew < cropHeight; yNew++) {
+                int xOld = cropX + xNew +1;
+                int yOld = cropY + yNew +1;
+                newPixelArray[yNew][xNew] = oldPixelArray[yOld][xOld];
+            }
+        }
+        return new GImage(newPixelArray);
     }
 }
