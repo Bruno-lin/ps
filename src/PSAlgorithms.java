@@ -152,8 +152,8 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
         int[][] newPixelArray = new int[cropHeight][cropWidth];
         for (int xNew = 0; xNew < cropWidth; xNew++) {
             for (int yNew = 0; yNew < cropHeight; yNew++) {
-                int xOld = cropX + xNew +1;
-                int yOld = cropY + yNew +1;
+                int xOld = cropX + xNew ;
+                int yOld = cropY + yNew ;
                 newPixelArray[yNew][xNew] = oldPixelArray[yOld][xOld];
             }
         }
