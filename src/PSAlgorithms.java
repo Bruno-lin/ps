@@ -106,19 +106,24 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
         return new GImage(newPixelArray);
     }
 
+    /**
+     * Method: 图片反相
+     *
+     * @param source
+     * @return
+     */
     public GImage negative(GImage source) {
         int[][] pixelArray = source.getPixelArray();
         for (int row = 0; row < pixelArray.length; row++) {
-            for (int col = 0; col < pixelArray.length; col++) {
+            for (int col = 0; col < pixelArray[0].length; col++) {
                 int pixel = pixelArray[col][row];
                 int r = GImage.getRed(pixel);
                 int g = GImage.getGreen(pixel);
                 int b = GImage.getBlue(pixel);
-                int newPixel = GImage.createRGBPixel(255 - r, 255 - b, 255 - g);
+                int newPixel = GImage.createRGBPixel(255 - r, 255 - g, 255 - b);
                 pixelArray[col][row] = newPixel;
             }
         }
-
         return new GImage(pixelArray);
     }
 
