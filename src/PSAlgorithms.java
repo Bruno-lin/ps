@@ -4,6 +4,12 @@ import java.awt.*;
 
 public class PSAlgorithms implements PSAlgorithmsInterface {
 
+    /**
+     * Method: 逆时针旋转图片
+     *
+     * @param source
+     * @return
+     */
     public GImage rotateCounterclockwise(GImage source) {
         /************************************************
          * 旋转前，旧图片的信息
@@ -29,7 +35,6 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
                 newPixelArray[yNew][xNew] = oldPixelArray[yOld][xOld];
             }
         }
-
         return new GImage(newPixelArray);
     }
 
@@ -67,9 +72,38 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
         return new GImage(newPixelArray);
     }
 
+    /**
+     * Method: 水平翻转图片
+     *
+     * @param source
+     * @return
+     */
     public GImage flipHorizontal(GImage source) {
-        // TODO
-        return null;
+        /************************************************
+         * 旋转前，旧图片的信息
+         ************************************************/
+        int[][] oldPixelArray = source.getPixelArray();     // 旧图片数组
+        int oldHeight = oldPixelArray[0].length;               // 旧图片高度
+        int oldWidth = oldPixelArray.length;             // 旧图片宽度
+
+        /************************************************
+         * 旋转前，旧图片的信息
+         ************************************************/
+        int newHeight = oldWidth;                               // 新图片高度等于旧图片宽度
+        int newWidth = oldHeight;                               // 新图片宽度等于旧图片高度
+        int[][] newPixelArray = new int[newHeight][newWidth];   // 为新图片新建一个数组，行数是newHeight，列数是newWidth
+
+        /************************************************
+         * 新旧数组的像素对应关系
+         ************************************************/
+        for (int yNew = 0; yNew < newHeight; yNew++) {
+            for (int xNew = 0; xNew < newWidth; xNew++) {
+                int yOld = yNew;
+                int xOld = oldHeight - xNew - 1;
+                newPixelArray[yNew][xNew] = oldPixelArray[yOld][xOld];
+            }
+        }
+        return new GImage(newPixelArray);
     }
 
     public GImage negative(GImage source) {
@@ -100,12 +134,13 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
 
     /**
      * 裁剪图片，裁剪后仅保留选区内容，其他全部删掉
-     * @param source        要被裁剪的原始图片
-     * @param cropX         选区左上角的x坐标
-     * @param cropY         选区左上角的y坐标
-     * @param cropWidth     选区的宽度
-     * @param cropHeight    选区的高度
-     * @return              裁剪后的图片
+     *
+     * @param source     要被裁剪的原始图片
+     * @param cropX      选区左上角的x坐标
+     * @param cropY      选区左上角的y坐标
+     * @param cropWidth  选区的宽度
+     * @param cropHeight 选区的高度
+     * @return 裁剪后的图片
      */
     public GImage crop(GImage source, int cropX, int cropY, int cropWidth, int cropHeight) {
         // TODO
