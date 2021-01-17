@@ -146,7 +146,7 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
                 }
             }
         }
-        return new GImage(pixelArray)
+        return new GImage(pixelArray);
     }
 
     /**
