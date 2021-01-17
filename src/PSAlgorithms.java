@@ -134,6 +134,11 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
         return null;
     }
 
+    /**
+     * Method: 图片卷积
+     * @param source
+     * @return
+     */
     public GImage convolution(GImage source) {
         int[][] pixelArray = source.getPixelArray();
         int pixelOfPhotoHeight = pixelArray.length;
@@ -147,7 +152,14 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
         return new GImage(newPixelArray);
     }
 
-
+    /**
+     * Method: 获得图片卷积参数
+     * @param pixelArray
+     * @param x
+     * @param y
+     * @param CONVOLUTION_RADIUS
+     * @return
+     */
     public int getPixel(int[][] pixelArray, int x, int y, int CONVOLUTION_RADIUS) {
             int pixelOfPhotoHeight = pixelArray.length;
             int pixelOfPhotoWidth = pixelArray[0].length;
