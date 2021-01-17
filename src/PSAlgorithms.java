@@ -130,8 +130,23 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
     }
 
     public GImage greenScreen(GImage source) {
-        // TODO
-        return null;
+        int[][] pixelArray = source.getPixelArray();
+        int pixelOfPhotoHeight = pixelArray.length;
+        int pixelOfPhotoWidth = pixelArray[0].length;
+        for (int row = 0; row < pixelOfPhotoHeight; row++) {
+            for (int col = 0; col < pixelOfPhotoWidth; col++) {
+                int pixel = pixelArray[row][col];
+                int r = GImage.getRed(pixel);
+                int g = GImage.getGreen(pixel);
+                int b = GImage.getBlue(pixel);
+                int rbPixelMax = Math.max(r,b);
+                if (g >= rbPixelMax * 2) {
+                    int transparentPixel = GImage.createRGBPixel(0, 0, 0,0);
+                    pixelArray[row][col] = transparentPixel;
+                }
+            }
+        }
+        return new GImage(pixelArray)
     }
 
     /**
@@ -174,9 +189,10 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
 
             for(int row = yMin; row <= yMax; row++) {
                 for (int col = xMin; col <= xMax; col++) {
-                    rSum += GImage.getRed(pixelArray[row][col]);
-                    bSum += GImage.getBlue(pixelArray[row][col]);
-                    gSum += GImage.getGreen(pixelArray[row][col]);
+                    int pixel = pixelArray[row][col];
+                    rSum += GImage.getRed(pixel);
+                    bSum += GImage.getBlue(pixel);
+                    gSum += GImage.getGreen(pixel);
                     pixelCount ++;
                 }
             }
