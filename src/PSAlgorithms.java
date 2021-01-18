@@ -129,6 +129,12 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
         return new GImage(pixelArray);
     }
 
+    /**
+     * Method: 绿屏扣图
+     *
+     * @param source
+     * @return
+     */
     public GImage greenScreen(GImage source) {
         int[][] pixelArray = source.getPixelArray();
         int pixelOfPhotoHeight = pixelArray.length;
@@ -139,9 +145,9 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
                 int r = GImage.getRed(pixel);
                 int g = GImage.getGreen(pixel);
                 int b = GImage.getBlue(pixel);
-                int rbPixelMax = Math.max(r,b);
+                int rbPixelMax = Math.max(r, b);
                 if (g >= rbPixelMax * 2) {
-                    int transparentPixel = GImage.createRGBPixel(0, 0, 0,0);
+                    int transparentPixel = GImage.createRGBPixel(0, 0, 0, 0);
                     pixelArray[row][col] = transparentPixel;
                 }
             }
@@ -151,6 +157,7 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
 
     /**
      * Method: 图片卷积
+     *
      * @param source
      * @return
      */
@@ -161,7 +168,7 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
         int[][] newPixelArray = new int[pixelOfPhotoHeight][pixelOfPhotoWidth];
         for (int y = 0; y < pixelOfPhotoHeight; y++) {
             for (int x = 0; x < pixelOfPhotoWidth; x++) {
-                newPixelArray[y][x] = getPixel(pixelArray, x, y, CONVOLUTION_RADIUS);
+                newPixelArray[y][x] = getPixel(pixelArray, x, y);
             }
         }
         return new GImage(newPixelArray);
@@ -169,35 +176,38 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
 
     /**
      * Method: 获得图片卷积参数
+     *
      * @param pixelArray
      * @param x
      * @param y
-     * @param CONVOLUTION_RADIUS
      * @return
      */
-    public int getPixel(int[][] pixelArray, int x, int y, int CONVOLUTION_RADIUS) {
-            int pixelOfPhotoHeight = pixelArray.length;
-            int pixelOfPhotoWidth = pixelArray[0].length;
+    private int getPixel(int[][] pixelArray, int x, int y) {
+        int pixelOfPhotoHeight = pixelArray.length;
+        int pixelOfPhotoWidth = pixelArray[0].length;
 
-            int rSum = 0; int bSum = 0; int gSum = 0;
-            int pixelCount = 0;        // 计算卷积时，使用的像素点数
+        int rSum = 0;
+        int bSum = 0;
+        int gSum = 0;
+        int pixelCount = 0;        // 计算卷积时，使用的像素点数
 
-            int xMin = Math.max(x - CONVOLUTION_RADIUS, 0);
-            int xMax = Math.min(x + CONVOLUTION_RADIUS, pixelOfPhotoWidth - 1);
-            int yMin = Math.max(y - CONVOLUTION_RADIUS, 0);
-            int yMax = Math.min(y + CONVOLUTION_RADIUS, pixelOfPhotoHeight - 1);
+        int xMin = Math.max(x - CONVOLUTION_RADIUS, 0);
+        int xMax = Math.min(x + CONVOLUTION_RADIUS, pixelOfPhotoWidth - 1);
+        int yMin = Math.max(y - CONVOLUTION_RADIUS, 0);
+        int yMax = Math.min(y + CONVOLUTION_RADIUS, pixelOfPhotoHeight - 1);
 
-            for(int row = yMin; row <= yMax; row++) {
-                for (int col = xMin; col <= xMax; col++) {
-                    int pixel = pixelArray[row][col];
-                    rSum += GImage.getRed(pixel);
-                    bSum += GImage.getBlue(pixel);
-                    gSum += GImage.getGreen(pixel);
-                    pixelCount ++;
-                }
+        for (int row = yMin; row <= yMax; row++) {
+            for (int col = xMin; col <= xMax; col++) {
+                int pixel = pixelArray[row][col];
+                rSum += GImage.getRed(pixel);
+                bSum += GImage.getBlue(pixel);
+                gSum += GImage.getGreen(pixel);
+                pixelCount++;
+                System.out.println(row + " " + col + " " + pixelCount);
             }
-            return GImage.createRGBPixel(rSum / pixelCount, gSum / pixelCount, bSum / pixelCount);
         }
+        return GImage.createRGBPixel(rSum / pixelCount, gSum / pixelCount, bSum / pixelCount);
+    }
 
     /**
      * 裁剪图片，裁剪后仅保留选区内容，其他全部删掉
@@ -214,11 +224,61 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
         int[][] newPixelArray = new int[cropHeight][cropWidth];
         for (int xNew = 0; xNew < cropWidth; xNew++) {
             for (int yNew = 0; yNew < cropHeight; yNew++) {
-                int xOld = cropX + xNew ;
-                int yOld = cropY + yNew ;
+                int xOld = cropX + xNew;
+                int yOld = cropY + yNew;
                 newPixelArray[yNew][xNew] = oldPixelArray[yOld][xOld];
             }
         }
         return new GImage(newPixelArray);
+    }
+
+    public GImage equalization(GImage source) {
+        int[] luminosityStatus = getLuminosityStatus(source);
+        int[][] pixelArray = source.getPixelArray();
+        int pixelOfPhotoHeight = pixelArray.length;
+        int pixelOfPhotoWidth = pixelArray[0].length;
+
+        for (int row = 0; row < pixelOfPhotoHeight; row++) {
+            for (int col = 0; col < pixelOfPhotoWidth; col++) {
+                int pixel = pixelArray[row][col];
+                int r = GImage.getRed(pixel);
+                int g = GImage.getGreen(pixel);
+                int b = GImage.getBlue(pixel);
+                int luminosity = computeLuminosity(r, g, b);
+                int totalNumOfPixel = totalPixels(luminosityStatus, 0, luminosity);
+                int averageOfRGB = 255 * totalNumOfPixel / (pixelOfPhotoHeight * pixelOfPhotoWidth);
+                int newImage = GImage.createRGBPixel(averageOfRGB, averageOfRGB, averageOfRGB);
+                pixelArray[row][col] = newImage;
+            }
+        }
+        return new GImage(pixelArray);
+    }
+
+    private int[] getLuminosityStatus(GImage source) {
+        int[][] pixelArray = source.getPixelArray();
+        int pixelOfPhotoHeight = pixelArray.length;
+        int pixelOfPhotoWidth = pixelArray[0].length;
+        int[] luminosityStatus = new int[256];
+
+        for (int row = 0; row < pixelOfPhotoHeight; row++) {
+            for (int col = 0; col < pixelOfPhotoWidth; col++) {
+                int pixel = pixelArray[row][col];
+                int r = GImage.getRed(pixel);
+                int g = GImage.getGreen(pixel);
+                int b = GImage.getBlue(pixel);
+                int luminosity = computeLuminosity(r, g, b);
+                luminosityStatus[luminosity] += 1;
+            }
+        }
+        return luminosityStatus;
+    }
+
+    private int totalPixels(int[] quantityOfPixel, int beg, int end) {
+        int total = 0;
+
+        for (int a = beg; a < end; a++) {
+            total += quantityOfPixel[a];
+        }
+        return total;
     }
 }
