@@ -245,7 +245,7 @@ public class PSAlgorithms implements PSAlgorithmsInterface {
                 int g = GImage.getGreen(pixel);
                 int b = GImage.getBlue(pixel);
                 int luminosity = computeLuminosity(r, g, b);
-                int totalNumOfPixel = totalPixels(luminosityStatus, 0, luminosity);
+                int totalNumOfPixel = totalPixels(luminosityStatus, 0, luminosity +1);
                 int averageOfRGB = 255 * totalNumOfPixel / (pixelOfPhotoHeight * pixelOfPhotoWidth);
                 int newImage = GImage.createRGBPixel(averageOfRGB, averageOfRGB, averageOfRGB);
                 pixelArray[row][col] = newImage;
