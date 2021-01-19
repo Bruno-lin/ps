@@ -14,7 +14,8 @@ import javax.swing.*;
 
 public class PS extends GraphicsProgram {
 
-    public static final int APPLICATION_HEIGHT = 600;
+    public static final int APPLICATION_HEIGHT = 800;
+    public static final int APPLICATION_WIDTH = 1000;
 
     // 支持保存为3种图片格式
     private static final String[] SAVE_IMAGE_EXTENSIONS = new String[]{"png", "bmp", "wbmp"};
@@ -63,6 +64,12 @@ public class PS extends GraphicsProgram {
         add(new JButton("卷积"), WEST);
         add(new JButton("裁剪"), WEST);
         add(new JButton("均衡化"), WEST);
+        add(new JButton("乡村"), EAST);
+        add(new JButton("二值化"), EAST);
+        add(new JButton("去色"), EAST);
+        add(new JButton("马赛克"), EAST);
+        add(new JButton("放大镜"), EAST);
+        add(new JButton("浮雕"), EAST);
 
         // NORTH是窗口上部
         infoLabel = new JLabel("槑图秀秀");
@@ -117,12 +124,49 @@ public class PS extends GraphicsProgram {
             } else {
                 showErrorPopup("请选择裁剪区域");
             }
+        } else if (command.equals("马赛克")) {
+            if (currentlySelecting) {
+                GImage newImage = algorithms.mosaic(currentImage, (int) selectedArea.getX(),
+                        (int) selectedArea.getY(), (int) selectedArea.getWidth(),
+                        (int) selectedArea.getHeight());
+
+                setImage(newImage);
+                infoLabel.setText(command + "已生效。");
+            } else {
+                showErrorPopup("请选择马赛克区域");
+            }
+        } else if (command.equals("放大镜")) {
+            if (currentlySelecting) {
+                GImage newImage = algorithms.zoom(currentImage, (int) selectedArea.getX(),
+                        (int) selectedArea.getY());
+
+                setImage(newImage);
+                infoLabel.setText(command + "已生效。");
+            } else {
+                showErrorPopup("请选择放大区域");
+            }
         } else if (command.equals("卷积")) {
             GImage newImage = algorithms.convolution(currentImage);
             setImage(newImage);
             infoLabel.setText(command + "已生效。");
         } else if (command.equals("均衡化")) {
             GImage newImage = algorithms.equalization(currentImage);
+            setImage(newImage);
+            infoLabel.setText(command + "已生效。");
+        } else if (command.equals("乡村")) {
+            GImage newImage = algorithms.vintage(currentImage);
+            setImage(newImage);
+            infoLabel.setText(command + "已生效。");
+        } else if (command.equals("二值化")) {
+            GImage newImage = algorithms.binarization(currentImage);
+            setImage(newImage);
+            infoLabel.setText(command + "已生效。");
+        } else if (command.equals("去色")) {
+            GImage newImage = algorithms.desaturate(currentImage);
+            setImage(newImage);
+            infoLabel.setText(command + "已生效。");
+        } else if (command.equals("浮雕")) {
+            GImage newImage = algorithms.emboss(currentImage);
             setImage(newImage);
             infoLabel.setText(command + "已生效。");
         } else {
